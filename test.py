@@ -1,9 +1,9 @@
 from charm.toolbox.pairinggroup import PairingGroup, GT
-from __init__ import GPSW06KPABE
+from __init__ import KPABE
 
 # 1. 初始化
 group = PairingGroup('SS512')
-abe = GPSW06KPABE(group, uni_size=5)
+abe = KPABE(group, uni_size=5)
 
 # 2. 系统初始化
 pk, msk = abe.setup()

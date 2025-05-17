@@ -1,18 +1,3 @@
-'''
-Vipul Goyal, Omkant Pandey, Amit Sahai, Brent Waters
-
-| From: "Attribute-Based Encryption for Fine-Grained Access Control of Encrypted Data"
-| Published in: 2006
-| Available from: https://eprint.iacr.org/2006/309.pdf
-| Notes: Implemented the scheme in Appendix A.1
-|
-| type:           key-policy attribute-based encryption
-| setting:        Pairing
-
-:Authors:         Doreen Riepel
-:Date:            04/2022
-'''
-
 from charm.toolbox.pairinggroup import PairingGroup, ZR, G1, G2, GT, pair
 from charm.toolbox.ABEnc import ABEnc
 from msp import MSP
@@ -20,24 +5,18 @@ from msp import MSP
 debug = False
 
 
-class GPSW06KPABE(ABEnc):
+class KPABE(ABEnc):
 
     def __init__(self, group_obj, uni_size, verbose=False):
         ABEnc.__init__(self)
-        self.name = "GPSW06 KP-ABE"
+        self.name = "KP-ABE"
         self.group = group_obj
-        self.uni_size = uni_size  # bound on the size of the universe of attributes
+        self.uni_size = uni_size
         self.util = MSP(self.group, verbose)
 
     def setup(self):
-        """
-        Generates public key and master secret key.
-        """
-
         if debug:
             print('Setup algorithm:\n')
-
-        # pick a random element each from two source groups and pair them
         g1 = self.group.random(G1)
         g2 = self.group.random(G2)
         alpha = self.group.random(ZR)
@@ -56,10 +35,6 @@ class GPSW06KPABE(ABEnc):
         return pk, msk
 
     def encrypt(self, pk, msg, attr_list):
-        """
-         Encrypt a message M under a set of attributes.
-        """
-
         if debug:
             print('Encryption algorithm:\n')
 
@@ -74,10 +49,6 @@ class GPSW06KPABE(ABEnc):
         return {'attr_list': attr_list, 'c0': c0, 'cy': cy}
 
     def keygen(self, pk, msk, policy_str):
-        """
-        Generate a key for a monotone span program.
-        """
-
         if debug:
             print('Key generation algorithm:\n')
 
@@ -104,10 +75,6 @@ class GPSW06KPABE(ABEnc):
         return {'policy': policy, 'k': k}
 
     def decrypt(self, pk, ctxt, key):
-        """
-         Decrypt ciphertext ctxt with key key.
-        """
-
         if debug:
             print('Decryption algorithm:\n')
 
