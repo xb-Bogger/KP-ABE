@@ -1,15 +1,3 @@
-"""
-This class is adapted from the SecretUtil class in charm/toolbox/secretutil.py.
-It provides the following methods:
-- createPolicy: convert a Boolean formula encoded as a string into a policy represented like a tree;
-- convertPolicyToMSP: convert a policy into a monotone span program (MSP);
-- getCoefficients: given a policy, returns a coefficient for every attribute;
-- strip_index: remove the index from an attribute (i.e., x_y -> x);
-- prune: determine whether a given set of attributes satisfies the policy
-    (returns false if it doesn't, otherwise a good enough subset of attributes);
-- getAttributeList: retrieve the attributes that occur in a policy tree in order (left to right).
-"""
-
 from charm.core.math.pairing import ZR
 from charm.toolbox.policytree import *
 
@@ -20,12 +8,7 @@ class MSP:
         self.group = groupObj
 
     def createPolicy(self, policy_string):
-        """
-         Convert a Boolean formula represented as a string into a policy represented like a tree.
-        """
-
         assert type(policy_string) is str, "invalid type for policy_string"
-        #policy_string = str(policy_string)
         parser = PolicyParser()
         policy_obj = parser.parse(policy_string)
         _dictCount, _dictLabel = {}, {}
@@ -36,22 +19,11 @@ class MSP:
         return policy_obj
 
     def convert_policy_to_msp(self, tree):
-        """
-        Convert a policy into a monotone span program (MSP)
-        represented by a dictionary with (attribute, row) pairs
-        """
-
         root_vector = [1]
-        # listOfAttributeRowPairs = {}
         self.len_longest_row = 1
         return self._convert_policy_to_msp(tree, root_vector)
 
     def _convert_policy_to_msp(self, subtree, curr_vector):
-        """
-         Given a vector for the current node,
-         returns the vectors for its children in the form of a dictionary
-        """
-
         if subtree is None:
             return None
 
@@ -85,19 +57,11 @@ class MSP:
         return None
 
     def getCoefficients(self, tree):
-        """
-        Given a policy, returns a coefficient for every attribute.
-        """
-
         coeffs = {}
         self._getCoefficientsDict(tree, coeffs)
         return coeffs
 
     def recoverCoefficients(self, list):
-        """
-        recovers the coefficients over a binary tree.
-        """
-
         coeff = {}
         list2 = [self.group.init(ZR, i) for i in list]
         for i in list2:
@@ -111,12 +75,6 @@ class MSP:
         return coeff
 
     def _getCoefficientsDict(self, tree, coeff_list, coeff=1):
-        """
-        recover coefficient over a binary tree where possible node types are OR = (1 of 2)
-        and AND = (2 of 2) secret sharing. The leaf nodes are attributes and the coefficients are
-        recorded in a coeff-list dictionary.
-        """
-
         if tree:
             node = tree.getNodeType()
             if (node == OpType.AND):
@@ -135,28 +93,15 @@ class MSP:
                 return None
 
     def strip_index(self, node_str):
-        """
-         Remove the index from an attribute (i.e., x_y -> x).
-        """
-
         if node_str.find('_') != -1:
             return node_str.split('_')[0]
         return node_str
 
     def prune(self, policy, attributes):
-        """
-        Determine whether a given set of attributes satisfies the policy
-        (returns false if it doesn't, otherwise a good enough subset of attributes).
-        """
-
         parser = PolicyParser()
         return parser.prune(policy, attributes)
 
     def getAttributeList(self, Node):
-        """
-         Retrieve the attributes that occur in a policy tree in order (left to right).
-        """
-
         aList = []
         self._getAttributeList(Node, aList)
         return aList
@@ -174,15 +119,8 @@ class MSP:
         
 if __name__ == "__main__":
     util = MSP(ZR)
-    #util = SecretUtil(ZR)
-    #keywords_list = ['abc:123', 'def:456', 'ghi:789']
-    #list_stripped = util.keywords_strip(keywords_list)
-    
     kw_policy = '(1001:1 and 1002:2) or (1003:3 and 1004:4)'
     kw_policy = util.createPolicy(kw_policy) 
     
     print(kw_policy, type(kw_policy))
-    #print(list_stripped)
-    #print(keywords_list)
-    #pass
         
